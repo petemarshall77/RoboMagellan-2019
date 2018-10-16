@@ -1,4 +1,5 @@
 #!/usr/bin/python
+from __future__ import print_function
 
 #==================
 # Find USB devices
@@ -8,7 +9,12 @@ import subprocess, re
 
 def main():
     ports_found = probe()
-    print(ports_found)
+    if len(ports_found) > 0:
+        for port in ports_found:
+            print(port, ports_found[port])
+    else:
+        print("No devices found")
+
 
 def probe():
     ports = {}
@@ -24,8 +30,9 @@ def probe():
                 regex = re.compile("{serial}==\"([\w\.:]+)\"")
                 match = regex.search(out)
                 if match:
-                    ports[installed_devices[serial_num]] = port
-            except:
+                    serial_num = match.group(1)
+                    ports[port] = serial_num
+            except Exception as e:
                 pass
 
     return ports
